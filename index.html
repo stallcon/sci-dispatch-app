@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SCI Dispatch</title>
+<meta name="theme-color" content="#111111" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon-192.png" />
+<style>
+:root{--bg:#f5f5f4;--panel:#fff;--text:#111827;--muted:#6b7280;--line:#e7e5e4;--dark:#111;--green:#16a34a;--yellow:#ca8a04;--red:#dc2626}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}.hero,.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px}
+.hero{overflow:hidden;margin-bottom:16px;box-shadow:0 10px 30px rgba(0,0,0,.05)} .hero-inner{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;padding:24px;background:linear-gradient(135deg,#111,#292524);color:white}
+.brand{display:flex;gap:16px;align-items:center}.brand img{width:220px;max-width:42vw;height:auto;background:white;border-radius:20px;padding:12px}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#d6d3d1;font-weight:700} h1{margin:8px 0 6px 0;font-size:36px}.sub{color:#d6d3d1;max-width:760px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-self:center}.stat{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);border-radius:20px;padding:14px}.stat .v{font-size:28px;font-weight:700;margin-top:8px}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:16px}.sidebar,.main{display:flex;flex-direction:column;gap:16px}.panel{padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.03)}
+.navbtn,.btn,.ghost{width:100%;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer;font-weight:700}.navbtn.active,.btn{background:var(--dark);color:white;border-color:var(--dark)}
+.navgroup{display:flex;flex-direction:column;gap:10px}.title{font-weight:700}.muted{color:var(--muted)} .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.cards{display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--line);border-radius:20px;background:#fff;padding:14px}.input{width:100%;padding:12px 14px;border:1px solid #d6d3d1;border-radius:16px;font:inherit;background:#fff}
+.label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#78716c;font-weight:700;margin-bottom:6px}.field{display:flex;flex-direction:column;gap:6px}.gridFields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rateBox{margin-top:14px;border-radius:24px;background:#111;color:white;padding:18px}.rateVal{font-size:38px;font-weight:700}.chip{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.low{background:#dcfce7;color:#166534}.mid{background:#fef3c7;color:#92400e}.high{background:#fee2e2;color:#991b1b}.soft{background:#fafaf9}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.small{font-size:12px}
+.hidden{display:none !important}.tabscreen{display:none}.tabscreen.active{display:block}.employee-only{display:none}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.metric{border:1px solid var(--line);border-radius:20px;background:#fafaf9;padding:14px}.metric .big{margin-top:8px;font-size:24px;font-weight:700}
+.chartWrap{margin-top:14px;border:1px solid var(--line);border-radius:24px;padding:14px;background:#fff}.chart{display:flex;align-items:flex-end;gap:10px;height:230px;padding-top:10px}.barcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;height:100%}.bar{width:100%;max-width:34px;border-radius:10px 10px 0 0;min-height:4px}.barlabel,.barvalue{font-size:11px;color:#44403c}
+.notice{border:1px solid var(--line);background:#fafaf9;border-radius:16px;padding:12px}.ordercard{border:1px solid var(--line);border-radius:22px;background:#fff;padding:16px;cursor:pointer}.selected{border-color:#111;background:#fafaf9}
+@media(max-width:980px){.hero-inner,.layout,.grid2,.gridFields,.metrics,.stats{grid-template-columns:1fr}.brand{flex-direction:column;align-items:flex-start}.brand img{width:260px;max-width:80vw}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero"><div class="hero-inner">
+  <div class="brand"><img src="logo.png" alt="SCI"><div><div class="eyebrow">Stallbaumer Concrete Industries</div><h1>SCI Dispatch System</h1><div class="sub">Installable PWA with weather-aware evaporation guidance, public order intake, protected dispatch tools, driver updates, and notification simulation.</div></div></div>
+  <div class="stats"><div class="stat"><div>Pending</div><div class="v" id="countPending">0</div></div><div class="stat"><div>Accepted</div><div class="v" id="countAccepted">0</div></div><div class="stat"><div>Refused</div><div class="v" id="countRefused">0</div></div></div>
+</div></div>
+
+<div class="layout">
+<div class="sidebar">
+  <div class="panel"><div class="title">Navigation</div><div class="navgroup" style="margin-top:12px">
+    <button class="navbtn active" data-tab="home">Home</button>
+    <button class="navbtn employee-only hidden" data-tab="dispatch">Dispatch</button>
+    <button class="navbtn employee-only hidden" data-tab="driver">Driver</button>
+    <button class="navbtn employee-only hidden" data-tab="customer">Customer</button>
+    <button class="navbtn employee-only hidden" data-tab="admin">Admin</button>
+  </div></div>
+
+  <div class="panel" id="loginPanel"><div class="title">Employee Login</div>
+    <div class="field" style="margin-top:12px"><div class="label">Email</div><input id="loginEmail" class="input" value="dispatcher@sci.local"></div>
+    <div class="field" style="margin-top:12px"><div class="label">Password</div><input id="loginPass" type="password" class="input" value="password123"></div>
+    <button class="btn" id="loginBtn" style="margin-top:14px">Log In</button>
+  </div>
+  <div class="panel hidden" id="logoutPanel"><div class="title">Session Active</div><div class="notice small" style="margin-top:12px">Dispatch tools are unlocked for the current employee session.</div><button class="ghost" id="logoutBtn" style="margin-top:14px">Log Out</button></div>
+  <div class="panel"><div class="title">Live Activity</div><div id="logBox" class="cards" style="margin-top:12px"></div></div>
+  <div class="panel"><div class="title">Push Notifications</div><div id="pushBox" class="cards" style="margin-top:12px"></div></div>
+</div>
+
+<div class="main">
+  <div id="home" class="tabscreen active">
+    <div class="grid2">
+      <div class="panel">
+        <div class="row"><div class="title">Evaporation Rate Calculator</div><span id="evapChip" class="chip low">Low</span></div>
+        <div class="muted small" style="margin-top:8px">Type the full jobsite address, then pause for live weather lookup.</div>
+        <div class="field" style="margin-top:16px"><div class="label">Address</div><input id="addressInput" class="input" placeholder="Enter address, city, state"></div>
+        <div class="metrics">
+          <div class="metric"><div class="label">Air Temp °F</div><div class="big" id="airTempView">--</div></div>
+          <div class="metric"><div class="label">Concrete Temp °F</div><input id="concreteTempInput" class="input" style="font-size:20px;font-weight:700" value="90"><div class="small muted" id="lastTempHint" style="margin-top:8px">Defaulting to last driver entry: 90°F</div></div>
+          <div class="metric"><div class="label">Humidity %</div><div class="big" id="humidityView">--</div></div>
+          <div class="metric"><div class="label">Wind mph</div><div class="big" id="windView">--</div></div>
+        </div>
+        <div class="chartWrap"><div class="row"><div><div style="font-weight:700">Hourly Evaporation Forecast</div><div class="small muted">Color-coded by warning threshold</div></div></div><div id="forecastChart" class="chart"></div></div>
+        <div class="rateBox"><div class="label" style="color:#a8a29e">Estimated evaporation rate</div><div class="rateVal"><span id="evapValue">0.00</span> <span style="font-size:20px;color:#d6d3d1">lb/ft²/hr</span></div><div id="weatherStatus" class="small" style="margin-top:10px;color:#d6d3d1">Enter an address to load live weather.</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="title">Public Order Form</div><div class="muted small" style="margin-top:8px">Location and requested time carry over from the calculator.</div>
+        <div class="field" style="margin-top:16px"><div class="label">Customer Name</div><input id="custName" class="input"></div>
+        <div class="field" style="margin-top:12px"><div class="label">Phone Number</div><input id="custPhone" class="input"></div>
+        <div class="field" style="margin-top:12px"><div class="label">Jobsite Location</div><input id="jobsite" class="input"></div>
+        <div class="field" style="margin-top:12px"><div class="label">Product</div><input id="product" class="input" value="Cement Slurry"></div>
+        <div class="gridFields" style="margin-top:12px"><div class="field"><div class="label">Quantity</div><input id="qty" class="input"></div><div class="field"><div class="label">Requested Delivery Time</div><input id="reqTime" class="input"></div></div>
+        <button class="btn" id="submitOrderBtn" style="margin-top:16px">Submit Order</button>
+        <div class="notice" style="margin-top:16px">Customer-facing tools remain public. Dispatch, driver, customer tracking, and admin controls remain protected behind employee login.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dispatch" class="tabscreen"><div class="grid2">
+    <div class="panel"><div class="row"><div class="title">Dispatch Board</div><div class="small muted">Tap an order to manage it</div></div><div id="dispatchList" class="cards" style="margin-top:16px"></div></div>
+    <div class="panel"><div class="title">Order Control Center</div><div id="selectedDetails" class="cards" style="margin-top:16px"></div><div class="gridFields" style="margin-top:16px"><button class="btn" id="acceptBtn">Accept</button><button class="btn" id="refuseBtn">Refuse</button></div><button class="btn" id="assignBtn" style="margin-top:12px">Assign Driver</button></div>
+  </div></div>
+
+  <div id="driver" class="tabscreen"><div class="grid2">
+    <div class="panel"><div class="title">Driver App</div><div id="driverOrderInfo" class="cards" style="margin-top:16px"></div><div class="gridFields" style="margin-top:16px"><button class="ghost driverStatus" data-status="Loaded">Loaded</button><button class="ghost driverStatus" data-status="En Route">En Route</button><button class="ghost driverStatus" data-status="Arrived On Site">Arrived On Site</button><button class="ghost driverStatus" data-status="Complete">Complete</button></div><button class="btn" id="driverUpdateBtn" style="margin-top:14px">Send Status Update</button><div id="tempPrompt" class="hidden notice" style="margin-top:16px"><div style="font-weight:700">Enter delivered concrete temperature</div><div class="small muted" style="margin-top:4px">Optional — leave blank to complete without a temperature.</div><input id="deliveredTempInput" class="input" placeholder="Concrete temperature at delivery" style="margin-top:12px"><button class="btn" id="saveDeliveryBtn" style="margin-top:12px">Save Delivery Completion</button></div></div>
+    <div class="panel"><div class="title">Driver Fleet Snapshot</div><div id="fleetBox" class="cards" style="margin-top:16px"></div></div>
+  </div></div>
+
+  <div id="customer" class="tabscreen"><div class="grid2">
+    <div class="panel"><div class="title">Customer Order Tracker</div><div id="customerList" class="cards" style="margin-top:16px"></div></div>
+    <div class="panel"><div class="title">Live Status View</div><div id="customerStatus" class="cards" style="margin-top:16px"></div></div>
+  </div></div>
+
+  <div id="admin" class="tabscreen"><div class="grid2">
+    <div class="panel"><div class="title">Suggested Production Build</div><div class="cards" style="margin-top:16px"><div class="card">Flutter or React Native app for iOS + Android</div><div class="card">Responsive web app for office dispatchers</div><div class="card">Firebase or Supabase for auth, orders, and live updates</div><div class="card">Twilio for accept / refuse / alternate-time messaging</div></div></div>
+    <div class="panel"><div class="title">Core Workflow</div><div class="cards" style="margin-top:16px"><div class="card">Customer uses public homepage tools</div><div class="card">Order enters pending queue</div><div class="card">Employee logs in to view dispatch tools</div><div class="card">Dispatcher accepts or refuses the order</div><div class="card">Driver is assigned and updates progress</div><div class="card">Customer receives live status texts and ETA</div></div></div>
+  </div></div>
+</div>
+</div>
+</div>
+
+<script>
+const state={isLoggedIn:false,addressQuery:"",selectedCoords:null,weatherHours:[],lastDriverConcreteTemp:90,driverStatus:"Arrived On Site",selectedOrderId:"SCI-2401",customerViewOrderId:"SCI-2402",orders:[{id:"SCI-2401",customer:"Metro Ready Mix",contact:"(555) 210-8841",site:"1450 West Loop Rd",product:"Cement Slurry",qty:"18 yd³",requested:"8:30 AM",status:"Pending",risk:"Medium",notes:"Gate code 4451",eta:"--",driver:null},{id:"SCI-2402",customer:"North Ridge Paving",contact:"(555) 832-1103",site:"221 County Line Ave",product:"Flowable Fill",qty:"9 yd³",requested:"9:15 AM",status:"Accepted",risk:"Low",notes:"Pump not needed",eta:"9:05 AM",driver:"Luis M."},{id:"SCI-2403",customer:"Stone Creek Builders",contact:"(555) 721-5300",site:"980 Quarry Park Dr",product:"Lean Mix",qty:"12 yd³",requested:"10:00 AM",status:"Refused",risk:"High",notes:"Offer alternate 11:30 AM",eta:"--",driver:null}],drivers:[{name:"Luis M.",truck:"Truck 12",status:"En Route"},{name:"Ava R.",truck:"Truck 7",status:"Available"},{name:"Noah T.",truck:"Truck 3",status:"At Plant"}],log:["Public homepage ready","Employee tools locked behind login","Dispatch board synced"],pushes:["Push notification center ready"]};
+const byId=id=>document.getElementById(id);
+const selectedOrder=()=>state.orders.find(o=>o.id===state.selectedOrderId)||state.orders[0];
+const customerOrder=()=>state.orders.find(o=>o.id===state.customerViewOrderId)||state.orders[0];
+const pushLog=msg=>{state.log.unshift(msg);state.log=state.log.slice(0,6);renderLogs();};
+const pushNotification=msg=>{state.pushes.unshift(msg);state.pushes=state.pushes.slice(0,8);renderPushes();};
+function renderCounts(){byId("countPending").textContent=state.orders.filter(o=>o.status==="Pending").length;byId("countAccepted").textContent=state.orders.filter(o=>o.status==="Accepted").length;byId("countRefused").textContent=state.orders.filter(o=>o.status==="Refused").length;}
+function renderLogs(){byId("logBox").innerHTML=state.log.map(x=>`<div class="card small">${x}</div>`).join("");}
+function renderPushes(){byId("pushBox").innerHTML=state.pushes.map(x=>`<div class="card small">${x}</div>`).join("");}
+function renderEvap(){const air=Number(byId("airTempView").textContent)||0, concrete=Number(byId("concreteTempInput").value)||0, humidity=Number(byId("humidityView").textContent)||0, wind=Number(byId("windView").textContent)||0; const rate=computeEvapRate(air,concrete,humidity,wind); byId("evapValue").textContent=rate.toFixed(2); const chip=byId("evapChip"); const bucket=getBucket(rate); chip.className="chip "+bucket; chip.textContent=bucket==="low"?"Low":bucket==="mid"?"Caution":"High"; byId("lastTempHint").textContent="Defaulting to last driver entry: "+state.lastDriverConcreteTemp+"°F"; renderForecast();}
+function renderForecast(){const concrete=Number(byId("concreteTempInput").value)||0, wrap=byId("forecastChart"); const hours=state.weatherHours.map(e=>{const rate=computeEvapRate(e.air,concrete,e.humidity,e.wind); return {hour:new Date(e.time).toLocaleTimeString([], {hour:"numeric"}), rate:Number(rate.toFixed(2)), bucket:getBucket(rate)};}); if(!hours.length){wrap.innerHTML='<div class="small muted">Forecast will appear after weather lookup.</div>'; return;} const max=Math.max(...hours.map(h=>h.rate),.2); wrap.innerHTML=hours.map(h=>{const height=Math.max(6,(h.rate/max)*180); const color=h.bucket==="low"?"#16a34a":h.bucket==="mid"?"#ca8a04":"#dc2626"; return `<div class="barcol"><div class="barvalue">${h.rate.toFixed(2)}</div><div class="bar" style="height:${height}px;background:${color}"></div><div class="barlabel">${h.hour}</div></div>`;}).join("");}
+async function fetchWeatherForCoordinates(latitude,longitude,label){try{byId("weatherStatus").textContent="Loading live weather..."; const requested=byId("reqTime").value||new Date().toISOString(); const url=`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`; const res=await fetch(url); if(!res.ok) throw new Error(); const data=await res.json(); const times=data?.hourly?.time||[]; const target=new Date(requested).getTime(); let bestIndex=0,bestDiff=Infinity; times.forEach((t,i)=>{const d=Math.abs(new Date(t).getTime()-target); if(d<bestDiff){bestDiff=d;bestIndex=i;}}); const air=data?.hourly?.temperature_2m?.[bestIndex], humidity=data?.hourly?.relative_humidity_2m?.[bestIndex], wind=data?.hourly?.wind_speed_10m?.[bestIndex]; byId("airTempView").textContent=air ?? "--"; byId("humidityView").textContent=humidity ?? "--"; byId("windView").textContent=wind ?? "--"; state.weatherHours=times.slice(bestIndex,bestIndex+12).map((time,offset)=>({time,air:data?.hourly?.temperature_2m?.[bestIndex+offset] ?? air ?? 0,humidity:data?.hourly?.relative_humidity_2m?.[bestIndex+offset] ?? humidity ?? 0,wind:data?.hourly?.wind_speed_10m?.[bestIndex+offset] ?? wind ?? 0})); byId("weatherStatus").textContent="Live weather loaded for "+label+"."; pushLog("Weather refreshed from API • "+label); renderEvap();}catch{byId("weatherStatus").textContent="Unable to load live weather right now."; pushLog("Weather API lookup failed");}}
+async function geocodeAddress(address){const res=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(address)}`, {headers:{Accept:"application/json"}}); if(!res.ok) throw new Error(); const data=await res.json(); if(!Array.isArray(data)||!data.length) throw new Error(); return {latitude:Number(data[0].lat), longitude:Number(data[0].lon), label:data[0].display_name||address};}
+let addressTimer=null;
+byId("addressInput").addEventListener("input", e=>{const value=e.target.value; state.addressQuery=value; byId("jobsite").value=value; byId("weatherStatus").textContent="Type the full address, then pause for lookup."; if(addressTimer) clearTimeout(addressTimer); if(value.trim().length<6) return; addressTimer=setTimeout(async()=>{try{byId("weatherStatus").textContent="Looking up address..."; const location=await geocodeAddress(value.trim()); byId("addressInput").value=location.label; byId("jobsite").value=location.label; state.selectedCoords={latitude:location.latitude, longitude:location.longitude}; await fetchWeatherForCoordinates(location.latitude, location.longitude, location.label);}catch{byId("weatherStatus").textContent="Address lookup failed."; pushLog("Address lookup failed");}},1600);});
+byId("reqTime").addEventListener("input", ()=>{if(state.selectedCoords) fetchWeatherForCoordinates(state.selectedCoords.latitude,state.selectedCoords.longitude,byId("addressInput").value||"selected location");});
+byId("concreteTempInput").addEventListener("input", renderEvap);
+function renderOrders(){byId("dispatchList").innerHTML=state.orders.map(o=>{const selected=o.id===state.selectedOrderId?"selected":""; const badge=o.status==="Accepted"?"low":o.status==="Refused"?"high":"mid"; return `<div class="ordercard ${selected}" onclick="window.__pickOrder('${o.id}')"><div class="row"><div><div><strong>${o.id}</strong> <span class="chip ${badge}">${o.status}</span></div><div style="margin-top:8px">${o.customer}</div><div class="small muted" style="margin-top:4px">${o.product} • ${o.qty}</div><div class="small muted" style="margin-top:4px">Requested: ${o.requested}</div></div><div class="small muted" style="text-align:right"><div>${o.driver||"No driver"}</div><div>ETA ${o.eta}</div></div></div></div>`;}).join(""); const o=selectedOrder(); byId("selectedDetails").innerHTML=`<div class="card"><strong>${o.id}</strong> — ${o.customer}</div><div class="card"><strong>Jobsite</strong><br>${o.site}</div><div class="card"><strong>Material</strong><br>${o.product} • ${o.qty}</div><div class="card"><strong>Requested Time</strong><br>${o.requested}</div><div class="card"><strong>Customer Contact</strong><br>${o.contact}</div><div class="card"><strong>Notes</strong><br>${o.notes}</div>`;}
+window.__pickOrder=id=>{state.selectedOrderId=id;renderOrders();};
+function renderDriver(){const o=customerOrder(); byId("driverOrderInfo").innerHTML=`<div class="card"><strong>Current Assignment</strong><br>${o.id} • ${o.customer}</div><div class="card"><strong>Destination</strong><br>${o.site}</div><div class="card"><strong>Load</strong><br>${o.product} • ${o.qty}</div><div class="card"><strong>Target ETA</strong><br>${o.eta}</div>`; byId("fleetBox").innerHTML=state.drivers.map(d=>`<div class="card"><strong>${d.name}</strong><br>${d.truck} — ${d.status}</div>`).join("");}
+function renderCustomer(){byId("customerList").innerHTML=state.orders.map(o=>`<div class="ordercard ${o.id===state.customerViewOrderId?'selected':''}" onclick="window.__pickCustomer('${o.id}')"><strong>${o.id}</strong> — ${o.customer}<div class="small muted" style="margin-top:6px">${o.product} • Requested ${o.requested}</div></div>`).join(""); const o=customerOrder(); byId("customerStatus").innerHTML=`<div class="card"><strong>Status</strong><br>${o.status}</div><div class="card"><strong>Driver</strong><br>${o.driver||"Pending assignment"}</div><div class="card"><strong>ETA</strong><br>${o.eta}</div><div class="card"><strong>Site</strong><br>${o.site}</div>`;}
+window.__pickCustomer=id=>{state.customerViewOrderId=id;renderCustomer();};
+function updateOrder(id,patch,logEntry){state.orders=state.orders.map(o=>o.id===id?{...o,...patch}:o); if(logEntry) pushLog(logEntry); renderAll();}
+byId("acceptBtn").onclick=()=>updateOrder(selectedOrder().id,{status:"Accepted",driver:"Ava R.",eta:"9:10 AM"},`${selectedOrder().id} accepted • SMS queued to customer`);
+byId("refuseBtn").onclick=()=>updateOrder(selectedOrder().id,{status:"Refused",notes:"Alternate time offered: 11:30 AM"},`${selectedOrder().id} refused • Alternate time text sent`);
+byId("assignBtn").onclick=()=>{updateOrder(selectedOrder().id,{status:"Accepted",driver:"Luis M.",eta:"8:55 AM"},`${selectedOrder().id} assigned to Luis M. • Driver notified`); pushNotification(`Driver push • Luis M. dispatched to ${selectedOrder().id}`);};
+document.querySelectorAll(".driverStatus").forEach(btn=>btn.onclick=()=>{state.driverStatus=btn.dataset.status; document.querySelectorAll(".driverStatus").forEach(x=>x.classList.remove("btn")); btn.classList.add("btn");});
+byId("driverUpdateBtn").onclick=()=>{const o=customerOrder(); if(state.driverStatus==="Loaded") pushNotification(`Customer push • Concrete for project ${o.id} has been loaded`); if(state.driverStatus==="Complete"){byId("tempPrompt").classList.remove("hidden"); return;} updateOrder(o.id,{eta:state.driverStatus==="Arrived On Site"?"Arrived":state.driverStatus},`${o.id} customer timeline updated: ${state.driverStatus}`);};
+byId("saveDeliveryBtn").onclick=()=>{const o=customerOrder(); const temp=byId("deliveredTempInput").value.trim(); if(temp){state.lastDriverConcreteTemp=Number(temp); byId("concreteTempInput").value=temp;} updateOrder(o.id,{eta:"Delivered",notes:(o.notes||"")+(temp?` • Delivered concrete temp: ${temp}°F`:" • Delivered with no concrete temp entered")},`${o.id} completed${temp?` • delivered temp recorded: ${temp}°F`:" • no delivered temp entered"}`); pushNotification(`Admin push • ${o.id} delivered 15 minutes later than scheduled`); byId("tempPrompt").classList.add("hidden"); byId("deliveredTempInput").value=""; renderEvap();};
+byId("submitOrderBtn").onclick=()=>{const nextId="SCI-"+(2400+state.orders.length+1); const ev=Number(byId("evapValue").textContent); const risk=ev>0.15?"High":ev>=0.1?"Medium":"Low"; state.orders.unshift({id:nextId,customer:byId("custName").value||"New Customer",contact:byId("custPhone").value||"--",site:byId("jobsite").value||"--",product:byId("product").value||"Cement Slurry",qty:byId("qty").value||"--",requested:byId("reqTime").value||"--",status:"Pending",risk,notes:"Submitted from public homepage",eta:"--",driver:null}); state.selectedOrderId=nextId; byId("custName").value=""; byId("custPhone").value=""; byId("product").value="Cement Slurry"; byId("qty").value=""; byId("reqTime").value=""; pushLog(nextId+" submitted from public homepage"); pushNotification("Admin push • New order submitted: "+nextId); renderAll();};
+document.querySelectorAll(".navbtn").forEach(btn=>btn.onclick=()=>{if(btn.classList.contains("employee-only")&&!state.isLoggedIn)return; document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active")); btn.classList.add("active"); document.querySelectorAll(".tabscreen").forEach(x=>x.classList.remove("active")); byId(btn.dataset.tab).classList.add("active");});
+byId("loginBtn").onclick=()=>{if(byId("loginEmail").value.trim()&&byId("loginPass").value.trim()){state.isLoggedIn=true; document.querySelectorAll(".employee-only").forEach(x=>x.classList.remove("hidden")); byId("loginPanel").classList.add("hidden"); byId("logoutPanel").classList.remove("hidden"); pushLog("Employee login successful • "+byId("loginEmail").value.trim()); document.querySelector('[data-tab="dispatch"]').click();}};
+byId("logoutBtn").onclick=()=>{state.isLoggedIn=false; document.querySelectorAll(".employee-only").forEach(x=>x.classList.add("hidden")); byId("loginPanel").classList.remove("hidden"); byId("logoutPanel").classList.add("hidden"); pushLog("Employee logged out"); document.querySelector('[data-tab="home"]').click();};
+function renderAll(){renderCounts();renderLogs();renderPushes();renderOrders();renderDriver();renderCustomer();renderEvap();}
+renderAll();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>

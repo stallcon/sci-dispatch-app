@@ -1,0 +1,21 @@
+{
+  "name": "SCI Dispatch",
+  "short_name": "SCI Dispatch",
+  "description": "SCI Dispatch PWA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f5f4",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
